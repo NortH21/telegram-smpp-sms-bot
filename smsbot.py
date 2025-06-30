@@ -35,6 +35,7 @@ def getPdu(pdu):
       sms = pdu.short_message.decode()
    source_addr = pdu.source_addr.decode()
    msg = "СМС от (%s): %s" % (source_addr, sms)
+   logger.info(msg)
    proxy.request('POST', "https://api.telegram.org/bot" + bot_token + "/sendMessage",
                  fields={"chat_id": channel_id, "text": msg, "disable_web_page_preview": "true"}).read()
 

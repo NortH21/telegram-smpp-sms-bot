@@ -22,7 +22,7 @@ spec:
         runAsGroup: 3000
       containers:
       - name: telegram-smpp-sms-bot
-        image: north21/telegram-smpp-sms-bot:202506301752
+        image: north21/telegram-smpp-sms-bot:202506301811
 #        startupProbe:
 #          exec:
 #            command: ["sh", "-c", "pgrep sms || exit 1"]
