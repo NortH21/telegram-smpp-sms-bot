@@ -1,0 +1,68 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telegram-smpp-sms-bot
+  namespace: telegram-smpp-sms-bot
+spec:
+  selector:
+    matchLabels:
+      app: telegram-smpp-sms-bot
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: telegram-smpp-sms-bot
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 3000
+      containers:
+      - name: telegram-smpp-sms-bot
+        image: north21/telegram-smpp-sms-bot
+        startupProbe:
+          exec:
+            command: ["sh", "-c", "pgrep sms || exit 1"]
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          failureThreshold: 30
+        livenessProbe:
+          exec:
+            command: ["sh", "-c", "pgrep sms || exit 1"]
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          exec:
+            command: ["sh", "-c", "pgrep sms || exit 1"]
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        env:
+          - name: telegram_bot_token
+            valueFrom:
+              secretKeyRef:
+                name: telegram-api-token
+                key: token
+          - name: telegram_channel_id
+            valueFrom:
+              secretKeyRef:
+                name: telegram-api-token
+                key: channel_id
+          - name: smpp_goip_host
+            value: "10.10.1.193"
+          - name: smpp_goip_port
+            value: "2775"
+          - name: smpp_goip_system_id
+            value: "admin"
+          - name: smpp_goip_password
+            value: "admin"
+        resources:
+          limits:
+            cpu: "1"
+            memory: "512Mi"
+          requests:
+            cpu: "0.5"
+            memory: "256Mi"
+
