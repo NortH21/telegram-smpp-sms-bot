@@ -10,6 +10,9 @@ sys.path.append('./lib')
 import smpplib
 
 logging.basicConfig(level='INFO')
+logger = logging.getLogger(__name__)
+
+logger.info('Started')
 
 bot_token = os.environ.get('telegram_bot_token')
 channel_id = os.environ.get('telegram_channel_id')
@@ -25,10 +28,10 @@ sms_destination_num = os.environ.get('smpp_goip_sim_num')
 def getPdu(pdu):
    russian_symbols_count = len(re.findall('[а-яё]', pdu.short_message.decode('utf-16be', errors='ignore'), re.I))
    if russian_symbols_count > 0:
-      print(pdu.short_message.decode('utf-16be', errors='ignore'))
+      logger.info(pdu.short_message.decode('utf-16be', errors='ignore'))
       sms = pdu.short_message.decode('utf-16be', errors='ignore')
    else:
-      print(pdu.short_message.decode())
+      logger.info(pdu.short_message.decode())
       sms = pdu.short_message.decode()
    source_addr = pdu.source_addr.decode()
    msg = "СМС от (%s): %s" % (source_addr, sms)
